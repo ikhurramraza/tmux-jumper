@@ -19,10 +19,14 @@ list-sessions() {
 main() {
   local new_session_script="$(get-tmux-option "@jumper-new-session-script" "$SCRIPTS_DIRECTORY/create_new_session.sh")"
 
-  raw_result=$(
-    list-sessions |
-      fzf --exit-0 --print-query --reverse
-  )
+  local sessions="$(list-sessions)"
+  local current_session="$(tmux display-message -p '#S')"
+  local current_position="$(grep -nFx "$current_session" <<<"$sessions" | cut -d: -f1)"
+
+  local fzf_args=(--exit-0 --print-query --reverse)
+  [[ -n "$current_position" ]] && fzf_args+=(--bind "load:pos($current_position)")
+
+  raw_result=$(fzf "${fzf_args[@]}" <<<"$sessions")
 
   local fzf_exit_code=$?
 
