@@ -9,13 +9,18 @@ export FZF_DEFAULT_OPTS=" \
 --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
 --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
 
+list-sessions() {
+  local sessions="$(tmux list-sessions -F "#{session_name}" | sort)"
+
+  grep -Fx main <<<"$sessions"
+  grep -Fvx main <<<"$sessions"
+}
+
 main() {
   local new_session_script="$(get-tmux-option "@jumper-new-session-script" "$SCRIPTS_DIRECTORY/create_new_session.sh")"
 
   raw_result=$(
-    tmux list-sessions -F "#{session_created}:#{session_name}" |
-      sort |
-      cut -d ":" -f2 |
+    list-sessions |
       fzf --exit-0 --print-query --reverse
   )
 
