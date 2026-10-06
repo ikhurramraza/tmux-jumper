@@ -39,7 +39,7 @@ main() {
     tmux switch-client -t "=$selection"
     ;;
   1)
-    [[ -n "$query" ]] && tmux run "$new_session_script $query"
+    [[ -n "$query" ]] && tmux run-shell "$new_session_script $(printf '%q' "$query")"
     ;;
   esac
 }
