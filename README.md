@@ -46,6 +46,17 @@ set -g @jumper-popup-height 10
 set -g @jumper-popup-y-position 25
 ```
 
+#### Title and border
+
+Defines the title shown on the popup frame and its border style (any value
+`popup-border-lines` accepts: `single`, `rounded`, `double`, `heavy`, `simple`,
+`padded`, `none`). Both need tmux 3.3 or newer. The default values are:
+
+```bash
+set -g @jumper-popup-title " jumper "
+set -g @jumper-popup-border "rounded"
+```
+
 ## 🤝 Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

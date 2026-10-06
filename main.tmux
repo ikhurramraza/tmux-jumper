@@ -11,6 +11,8 @@ main() {
   local width="$(get-tmux-option "@jumper-popup-width" 75)"
   local height="$(get-tmux-option "@jumper-popup-height" 10)"
   local y_position="$(get-tmux-option "@jumper-popup-y-position" 15)"
+  local title="$(get-tmux-option "@jumper-popup-title" " jumper ")"
+  local border="$(get-tmux-option "@jumper-popup-border" "rounded")"
 
   local arguments=()
 
@@ -18,7 +20,7 @@ main() {
     arguments+=("-n")
   fi
 
-  tmux bind-key "${arguments[@]}" "$key" display-popup -w $width -h $height -y $y_position -E "$SCRIPTS_DIRECTORY/switch_session.sh"
+  tmux bind-key "${arguments[@]}" "$key" display-popup -w "$width" -h "$height" -y "$y_position" -T "$title" -b "$border" -E "$SCRIPTS_DIRECTORY/switch_session.sh"
 }
 
 main
