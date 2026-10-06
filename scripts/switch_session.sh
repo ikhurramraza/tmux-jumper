@@ -26,25 +26,22 @@ main() {
   local fzf_args=(--exit-0 --print-query --reverse)
   [[ -n "$current_position" ]] && fzf_args+=(--bind "load:pos($current_position)")
 
+  local raw_result
   raw_result=$(fzf "${fzf_args[@]}" <<<"$sessions")
-
   local fzf_exit_code=$?
 
-  IFS=$'\n' read -rd '' -a result <<<"$raw_result"
+  local query="${raw_result%%$'\n'*}"
+  local selection="${raw_result#*$'\n'}"
+  [[ "$selection" == "$raw_result" ]] && selection=""
 
-  local query="${result[0]}"
-  local session_name="${result[1]}"
-
-  # Cancelled fzf prompt using Ctrl-C
-  [[ -z "$query" ]] && return 0
-
-  if [[ $fzf_exit_code == 0 ]]; then
-    [[ -z "$session_name" ]] && session_name="$query"
-
-    tmux switch-client -t "$session_name"
-  else
-    tmux run "$new_session_script $query"
-  fi
+  case "$fzf_exit_code" in
+  0)
+    tmux switch-client -t "=$selection"
+    ;;
+  1)
+    [[ -n "$query" ]] && tmux run-shell "$new_session_script $(printf '%q' "$query")"
+    ;;
+  esac
 }
 
 main
